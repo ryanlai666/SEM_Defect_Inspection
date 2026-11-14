@@ -1,0 +1,4 @@
+_base_: highpass.yaml
+name: highpass_offmask
+eval:
+  defect_images_only: true

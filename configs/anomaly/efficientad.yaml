@@ -1,0 +1,13 @@
+_base_: _anomaly_base.yaml
+name: efficientad_s
+data:
+  img_size: 256            # PDN-S: 256 px -> 56x56 feature map
+model:
+  name: efficientad
+  out_channels: 384
+  pretrained: true         # distilled PDN teacher (anomalib release, 40 MB); false => random teacher (tests only)
+train:
+  steps: 70000             # paper setting (batch 1); a budgeted run can override train.steps / batch_size
+  batch_size: 1
+  lr: 1.0e-4
+  weight_decay: 1.0e-5

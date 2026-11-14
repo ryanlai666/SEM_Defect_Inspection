@@ -1,0 +1,18 @@
+_base_: ../base.yaml
+task: classify
+name: resnet18_full
+tracking: {experiment: classify_cnn}
+model:
+  name: resnet18
+  pretrained: true
+train:
+  steps: 3000              # ~70 epochs of the 2.75k-image train split at bs 64
+  batch_size: 64
+  eval_batch_size: 128
+  lr: 3.0e-4
+  weight_decay: 0.05
+  warmup_steps: 100
+  eval_every: 250
+  class_weight_power: 0.5  # CE weights ~ (1/freq)^0.5  (87% of images are class 3)
+  label_smoothing: 0.0
+fewshot: {}                # set fewshot.k=5 fewshot.seed=0 for k-shot fine-tuning

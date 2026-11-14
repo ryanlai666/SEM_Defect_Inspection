@@ -1,0 +1,18 @@
+_base_: _anomaly_base.yaml
+name: anomalydino_vits14
+data:
+  img_size: 448            # 32x32 patch grid
+model:
+  name: anomalydino
+  backbone: dinov2_vits14
+  top_frac: 0.01
+  blur_sigma: 4.0
+  rotations: true          # rotation-augmented reference bank (few-shot setting)
+  knn_backend: torch
+  max_bank: null           # optional coreset cap on the reference bank
+  pretrained: true
+train:
+  batch_size: 4
+memory:
+  save_memory_bank: false  # 557k x 384 bank = 430 MB in FP16 per run; enable only for the run you deploy
+cudnn_benchmark: false     # inference-only: avoid cuDNN re-tuning on the ragged last batch

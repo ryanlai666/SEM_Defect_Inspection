@@ -1,0 +1,10 @@
+_base_: patchcore.yaml
+# Harder, non-trivial task: the normal bank also contains patches of train DEFECT images
+# that lie > 16 px from the expert mask (realistic textured backgrounds, framing squares, debris-free regions),
+# and evaluation is pixel-level on test DEFECT images only (normal pixels = off-mask pixels of defect images).
+name: patchcore_offmask
+memory:
+  offmask_images: 300
+  margin_px: 16
+eval:
+  defect_images_only: true

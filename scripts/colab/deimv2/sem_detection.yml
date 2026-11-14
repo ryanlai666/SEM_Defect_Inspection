@@ -1,0 +1,42 @@
+# Carinthia-S detection (boxes = mask connected components), copied into DEIMv2/configs/dataset/ on the VM.
+# Derived from DEIMv2's configs/dataset/custom_detection.yml (DEIMv2 License, non-commercial).
+task: detection
+
+evaluator:
+  type: CocoEvaluator
+  iou_types: ['bbox', ]
+
+num_classes: 5
+remap_mscoco_category: False
+
+train_dataloader:
+  type: DataLoader
+  dataset:
+    type: CocoDetection
+    img_folder: /content/det_data/images/train
+    ann_file: /content/det_data/annotations/instances_train_0based.json
+    return_masks: False
+    transforms:
+      type: Compose
+      ops: ~
+  shuffle: True
+  num_workers: 6
+  drop_last: True
+  collate_fn:
+    type: BatchImageCollateFunction
+
+val_dataloader:
+  type: DataLoader
+  dataset:
+    type: CocoDetection
+    img_folder: /content/det_data/images/val
+    ann_file: /content/det_data/annotations/instances_val_0based.json
+    return_masks: False
+    transforms:
+      type: Compose
+      ops: ~
+  shuffle: False
+  num_workers: 6
+  drop_last: False
+  collate_fn:
+    type: BatchImageCollateFunction

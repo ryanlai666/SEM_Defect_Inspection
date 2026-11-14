@@ -1,0 +1,31 @@
+# Shared defaults.  Every experiment config inherits this via `_base_`.
+seed: 0
+device: auto
+amp: true
+resume: true               # resume from outputs/<name>/checkpoints/last.ckpt if present
+checkpoint_minutes: 15     # time-based checkpoints (Colab rule: <= 20 min)
+keep_last_checkpoint: false  # last.ckpt (incl. optimizer) is deleted once a run has finished; best.ckpt is kept
+output_dir: outputs
+tracking:
+  enabled: true            # MLflow file store ./mlruns  (view: mlflow ui --backend-store-uri ./mlruns)
+  experiment: semdefect
+data:
+  root: data/raw/carinthia_s/data
+  split_seed: 0
+  img_size: 224
+  resize_mode: area        # area == adaptive avg-pool; mirrored exactly by the CUDA preprocess kernel
+  classes: [1, 2, 3, 4, 5, 6]
+  num_workers: 2
+  cache: disk               # false | ram | disk (uint8 memmap built once in data/cache/arrays; removes JPEG-decode bottleneck)
+augment:
+  enabled: true
+  flips: true
+  rot90: true
+  brightness: 0.1
+  contrast: 0.15
+  gamma: 0.15
+  sem_noise: false         # train-time shot-noise / blur / charging augmentation
+smoke:                     # short smoke test (enabled with --smoke)
+  enabled: false
+  n_images: 50
+  max_steps: 20

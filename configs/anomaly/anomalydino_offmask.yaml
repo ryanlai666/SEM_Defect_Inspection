@@ -1,0 +1,9 @@
+_base_: anomalydino.yaml
+# See patchcore_offmask.yaml.  Off-mask patches are not rotation-augmented.
+name: anomalydino_offmask
+memory:
+  offmask_images: 300
+  margin_px: 16
+  save_memory_bank: false
+eval:
+  defect_images_only: true

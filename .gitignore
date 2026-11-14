@@ -1,0 +1,70 @@
+# environments
+.venv/
+.conda-cuda/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# data, tracking, artefacts
+data/raw/
+data/cache/
+data/external/
+mlruns/
+mlartifacts/
+outputs/
+checkpoints/
+*.ckpt
+*.pt
+*.pth
+*.onnx
+*.engine
+*.plan
+*.trt
+
+# C++ build trees and fetched third-party code
+cpp/build*/
+cpp/third_party/*
+!cpp/third_party/README.md
+build/
+*.pyd
+*.so
+*.dll
+*.lib
+*.exp
+*.obj
+
+# notebooks / misc
+.ipynb_checkpoints/
+.DS_Store
+Thumbs.db
+
+# Ultralytics (Colab YOLO job): local settings dir and downloaded weights
+.ultralytics/
+yolo26n*.pt
+/third_party/
+
+# secrets (never commit API keys or tokens)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# editor settings
+.vscode/
+.idea/
+
+# local working notes and archived superseded files (not published)
+notes/
+
+# notebooks, logs, OS files
+*.log
+
+# model weights and large binaries (see DATA.md / README to regenerate)
+*.joblib
+*.safetensors
+*.h5
+*.zip
+*.tar.gz

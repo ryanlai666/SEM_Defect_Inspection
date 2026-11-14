@@ -1,0 +1,7 @@
+_base_: resnet18_full.yaml
+name: convnext_tiny_full
+model:
+  name: convnext_tiny
+train:
+  batch_size: 32
+  lr: 1.0e-4

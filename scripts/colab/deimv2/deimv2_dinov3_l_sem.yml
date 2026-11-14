@@ -1,0 +1,107 @@
+# DEIMv2-L (DINOv3-S STAs) fine-tuned on Carinthia-S detection; copied into DEIMv2/configs/deimv2/ on the VM.
+# Derived from DEIMv2's configs/deimv2/deimv2_dinov3_l_coco.yml (DEIMv2 License, non-commercial). Changes:
+#  * dataset -> sem_detection.yml (5 classes); input 480 (eval_spatial_size, Resize, collate base_size,
+#    Mosaic output_size = half the input as the README advises)
+#  * fixed 35-epoch budget (same for every detector); stage boundaries scaled from the 68-epoch COCO schedule
+#    (policy [4,34,60] -> [2,17,31], flat 34 -> 17, no-aug 8 -> 4, matcher change 50 -> 26), warm-up 2000 -> 500 it
+#  * total batch 16 on one L4 (COCO: 32) -> learning rates halved (linear scaling)
+#  * + RandomVerticalFlip (registered by det_deimv2.py) for parity with the other detectors' vertical flips
+#  * DINOv3 backbone file not used: the gated Meta download is skipped; all weights come from the COCO checkpoint (-t)
+__include__: [
+  '../dataset/sem_detection.yml',
+  '../runtime.yml',
+  '../base/dataloader.yml',
+  '../base/optimizer.yml',
+  '../base/deimv2.yml',
+]
+
+output_dir: /content/sem/outputs/det_deimv2_l_colab/train
+eval_spatial_size: [480, 480]
+checkpoint_freq: 1000
+
+DEIM:
+  backbone: DINOv3STAs
+
+DINOv3STAs:
+  name: dinov3_vits16
+  weights_path: ~
+  interaction_indexes: [5,8,11]
+  finetune: True
+  conv_inplane: 32
+  hidden_dim: 224
+
+HybridEncoder:
+  in_channels: [224, 224, 224]
+  hidden_dim: 224
+  dim_feedforward: 896
+
+DEIMTransformer:
+  feat_channels: [224, 224, 224]
+  hidden_dim: 224
+  num_layers: 4
+  eval_idx: -1
+  dim_feedforward: 1792
+
+epoches: 35
+lrsheduler: flatcosine
+lr_gamma: 0.5
+warmup_iter: 500
+flat_epoch: 17
+no_aug_epoch: 4
+
+optimizer:
+  type: AdamW
+  params:
+    -
+      params: '^(?=.*.dinov3)(?!.*(?:norm|bn|bias)).*$'
+      lr: 0.00000625
+    -
+      params: '^(?=.*.dinov3)(?=.*(?:norm|bn|bias)).*$'
+      lr: 0.00000625
+      weight_decay: 0.
+    -
+      params: '^(?=.*(?:sta|encoder|decoder))(?=.*(?:norm|bn|bias)).*$'
+      weight_decay: 0.
+  lr: 0.00025
+  betas: [0.9, 0.999]
+  weight_decay: 0.000125
+
+train_dataloader:
+  total_batch_size: 16
+  dataset:
+    transforms:
+      ops:
+        - {type: Mosaic, output_size: 240, rotation_range: 10, translation_range: [0.1, 0.1], scaling_range: [0.5, 1.5],
+           probability: 1.0, fill_value: 0, use_cache: True, max_cached_images: 50, random_pop: True}
+        - {type: RandomPhotometricDistort, p: 0.5}
+        - {type: RandomZoomOut, fill: 0}
+        - {type: RandomIoUCrop, p: 0.8}
+        - {type: SanitizeBoundingBoxes, min_size: 1}
+        - {type: RandomHorizontalFlip}
+        - {type: RandomVerticalFlip}
+        - {type: Resize, size: [480, 480], }
+        - {type: SanitizeBoundingBoxes, min_size: 1}
+        - {type: ConvertPILImage, dtype: 'float32', scale: True}
+        - {type: Normalize, mean: [0.485, 0.456, 0.406], std: [0.229, 0.224, 0.225]}
+        - {type: ConvertBoxes, fmt: 'cxcywh', normalize: True}
+      policy:
+        epoch: [2, 17, 31]
+  collate_fn:
+    base_size: 480
+    mixup_epochs: [2, 17]
+    stop_epoch: 31
+    copyblend_epochs: [2, 31]
+    base_size_repeat: 3
+
+val_dataloader:
+  total_batch_size: 32
+  dataset:
+    transforms:
+      ops:
+        - {type: Resize, size: [480, 480], }
+        - {type: ConvertPILImage, dtype: 'float32', scale: True}
+        - {type: Normalize, mean: [0.485, 0.456, 0.406], std: [0.229, 0.224, 0.225]}
+
+DEIMCriterion:
+  matcher:
+    matcher_change_epoch: 26

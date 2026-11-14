@@ -1,0 +1,10 @@
+_base_: _anomaly_base.yaml
+# Training-free sanity baseline: Gaussian high-pass residual -> local RMS map, max = score.
+name: highpass_baseline
+data:
+  img_size: 256
+model:
+  name: highpass
+  sigma_hp: 4.0
+  sigma_map: 4.0
+cudnn_benchmark: false

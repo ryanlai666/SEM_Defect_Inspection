@@ -1,0 +1,23 @@
+_base_: ../base.yaml
+task: segment
+name: unet_scratch
+tracking: {experiment: segment}
+data:
+  img_size: 256
+  include_empty_masks: true  # class-6 images (empty masks) stay in training as negatives
+model:
+  name: unet
+  base: 32
+  encoder: null            # scratch U-Net; see unet_r18.yaml for an ImageNet encoder
+  pretrained: false
+train:
+  steps: 6000
+  batch_size: 16
+  eval_batch_size: 8       # the scratch U-Net's full-resolution eval activations are large; eval-mode
+                           # results do not depend on the batch size
+  lr: 1.0e-3
+  weight_decay: 1.0e-4
+  warmup_steps: 200
+  eval_every: 500
+  bce_weight: 1.0
+  dice_weight: 1.0

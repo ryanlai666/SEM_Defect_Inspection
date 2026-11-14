@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "semdefect"
+version = "0.1.0"
+description = "SEM defect detection / few-shot classification / segmentation benchmark with a C++/CUDA/TensorRT inference engine"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    "numpy>=1.26",
+    "pillow>=10",
+    "pyyaml>=6",
+    "scipy>=1.11",
+    "scikit-learn>=1.4",
+    "pandas>=2.1",
+    "torch>=2.4",
+    "torchvision>=0.19",
+    "timm>=1.0",
+    "mlflow>=2.14",
+    "matplotlib>=3.8",
+    "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6"]
+gpu = ["cupy-cuda12x>=13", "onnx>=1.16", "onnxruntime-gpu>=1.18", "tensorrt-cu12>=10.0"]
+build = ["cmake>=3.28", "ninja>=1.11", "pybind11>=2.12"]
+
+[project.scripts]
+semdefect = "semdefect.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+semdefect = ["kernels/*.cu"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+extend-exclude = ["notebooks", "cpp/third_party", "data", "mlruns", "outputs", ".conda-cuda"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "NPY", "SIM"]
+ignore = ["E501", "B905", "SIM108", "SIM105", "NPY002"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B011"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q -m 'not gpu'"  # GPU tests are opt-in: run them through the GPU guard with -m gpu
+markers = [
+    "gpu: needs a CUDA GPU (skipped automatically when unavailable)",
+    "data: needs the Carinthia-S dataset under data/raw (skipped when absent)",
+    "ext: needs the compiled C++/CUDA extension (skipped when not built)",
+]
+filterwarnings = ["ignore::DeprecationWarning", "ignore::FutureWarning"]

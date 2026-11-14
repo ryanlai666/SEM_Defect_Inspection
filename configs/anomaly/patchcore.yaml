@@ -1,0 +1,15 @@
+_base_: _anomaly_base.yaml
+name: patchcore_wrn50
+data:
+  img_size: 256            # WRN50 layer2 grid 32x32
+model:
+  name: patchcore
+  backbone: wide_resnet50_2
+  layers: [2, 3]
+  embed_dim: 1024
+  coreset_ratio: 0.1
+  proj_dim: 128
+  blur_sigma: 4.0
+  knn_backend: torch       # torch | cupy | ext  (custom CUDA kNN kernels, Part B)
+  pretrained: true
+cudnn_benchmark: false     # inference-only: avoid cuDNN re-tuning on the ragged last batch

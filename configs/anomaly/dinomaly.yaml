@@ -1,0 +1,20 @@
+_base_: _anomaly_base.yaml
+name: dinomaly_vits14
+data:
+  img_size: 280            # 20x20 patch grid
+model:
+  name: dinomaly
+  backbone: dinov2_vits14_reg
+  enc_layers: [2, 3, 4, 5, 6, 7, 8, 9]
+  n_groups: 2
+  dropout: 0.2
+  top_frac: 0.01
+  blur_sigma: 4.0
+  pretrained: true
+train:
+  steps: 10000
+  batch_size: 8
+  lr: 2.0e-3
+  weight_decay: 1.0e-4
+  warmup_steps: 100
+  augment: true

@@ -1,0 +1,7 @@
+_base_: unet.yaml
+name: unet_resnet18
+model:
+  encoder: resnet18
+  pretrained: true
+train:
+  lr: 5.0e-4

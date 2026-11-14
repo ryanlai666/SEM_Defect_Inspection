@@ -1,0 +1,15 @@
+_base_: ../base.yaml
+task: fewshot
+name: fewshot_dinov2_vits14
+tracking: {experiment: classify_fewshot}
+model:
+  backbone: dinov2_vits14
+  pretrained: true
+batch_size: 64
+fewshot:
+  ks: [1, 5, 10, 20]
+  seeds: [0, 1, 2, 3, 4]
+  methods: [linear, linear_C1, proto, knn1]   # linear: C tuned on val (C_grid); linear_C1: untuned
+  include_full: true       # also fit the linear probe / prototypes on the whole train split
+  C_grid: [0.01, 0.1, 1.0, 10.0, 100.0]
+  center: true

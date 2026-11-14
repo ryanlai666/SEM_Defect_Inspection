@@ -1,0 +1,5 @@
+_base_: fewshot_dinov2_vits14.yaml
+name: fewshot_dinov2_vitb14
+model:
+  backbone: dinov2_vitb14
+batch_size: 32

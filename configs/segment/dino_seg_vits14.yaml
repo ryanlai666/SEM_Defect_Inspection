@@ -1,0 +1,15 @@
+_base_: unet.yaml
+name: dino_seg_vits14
+data:
+  img_size: 448            # 32x32 patch grid (14 px patches)
+model:
+  name: dino_seg
+  backbone: dinov2_vits14
+  n_layers: 4
+  dec_ch: 128
+  stem: true
+  pretrained: true
+train:
+  batch_size: 8
+  eval_batch_size: 16
+  lr: 1.0e-3

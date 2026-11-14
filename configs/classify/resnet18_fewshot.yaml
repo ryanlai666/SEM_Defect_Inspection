@@ -1,0 +1,11 @@
+_base_: resnet18_full.yaml
+name: resnet18_fewshot
+train:
+  steps: 300
+  batch_size: 32
+  eval_every: 100
+  class_weight_power: 0.0  # supports are already balanced
+  select_best: false       # k-shot honest: last checkpoint, no model selection on the full labelled val split
+fewshot:
+  k: 5
+  seed: 0

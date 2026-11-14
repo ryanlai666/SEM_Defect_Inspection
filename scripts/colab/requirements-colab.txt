@@ -1,0 +1,6 @@
+# Installed on the Colab VM on top of its preinstalled torch / torchvision / numpy / pandas / scikit-learn
+# (versions recorded in outputs/colab_logs/env.txt).  Pinned to the local venv where it matters.
+timm==1.0.31
+ultralytics==8.4.212
+pycocotools
+faster-coco-eval==1.8.0

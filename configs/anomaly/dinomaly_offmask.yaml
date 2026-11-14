@@ -1,0 +1,10 @@
+_base_: dinomaly.yaml
+# Off-mask protocol for a trained detector (run on a Colab L4): train on the class-6 train images plus the
+# same 300 train defect images as patchcore_offmask / anomalydino_offmask; the loss ignores patch tokens within
+# margin_px (at the 280-px model input) of a defect mask.  Evaluated on the test defect images only.
+name: dinomaly_offmask
+train:
+  offmask_images: 300
+  margin_px: 16
+eval:
+  defect_images_only: true
